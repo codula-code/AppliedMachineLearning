@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Pre-commit hook: run test.py on commits to the main branch
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$BRANCH" = "main" ]; then
+    echo "Running tests before commit on main branch..."
+    REPO_ROOT="$(git rev-parse --show-toplevel)"
+    cd "$REPO_ROOT/assignment_4"
+    source "$REPO_ROOT/.venv/bin/activate"
+    python -m pytest test.py -v
+    if [ $? -ne 0 ]; then
+        echo "Tests failed. Commit aborted."
+        exit 1
+    fi
+fi
